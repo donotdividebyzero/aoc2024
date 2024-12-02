@@ -1,0 +1,83 @@
+use std::fs::File;
+use std::io::{self, Read};
+use std::num::ParseIntError;
+
+
+fn read_file(file_path: &str) -> io::Result<String> {
+    let mut file = File::open(file_path)?;
+    
+    let mut contents = String::new();
+    file.read_to_string(&mut contents)?;
+    
+    Ok(contents)
+}
+
+// RULES:
+//    The levels are either all increasing or all decreasing.
+//    Any two adjacent levels differ by at least one and at most three.
+
+
+fn aoc_task(input: &str) -> Result<i64, ParseIntError> {
+    let input: Vec<&str> = input.split('\n').collect();
+
+    fn direction_way(step: i64) -> i64 {
+        if step > 0 { 1 } else { -1 }
+    }
+
+    Ok(input.into_iter().map(|levels: &str| -> i64 {
+        if levels.is_empty() {
+            return 0;
+        }
+
+        let levels: Vec<i64> = levels.split_whitespace()
+            .collect::<Vec<_>>()
+            .into_iter()
+            .map(|l| l.parse::<i64>().unwrap())
+            .collect();
+        println!("Levels: {:?}", levels);
+
+        let levels_len = levels.len() - 1;
+
+        let mut incline: i32 = 0;
+        let mut dir = 0;
+
+        for i in 0..levels_len {
+            let step = levels[i] - levels[i+1];
+
+            if dir == 0 {
+                dir = direction_way(step);
+            } else {
+                let direction = direction_way(step);
+                if direction != dir {
+                    println!("Not correct Levels: {:?}", levels);
+                    return 0;
+                }
+            }
+
+            if step.abs() <= 3 {
+                incline |= 1 << i;
+            }
+        }
+        
+        println!("Ones: {}", incline.count_ones());
+        return if incline.count_ones() == levels_len as u32 {
+            1
+        } else {
+            0
+        }; 
+    }).sum())
+}
+
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    
+    let filename = "input.txt";
+
+    let input = read_file(filename)?;
+
+    let result = aoc_task(input.as_str()).unwrap();
+
+    println!("Result: {}", result);
+
+    Ok(())
+}
