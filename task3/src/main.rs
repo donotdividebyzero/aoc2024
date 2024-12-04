@@ -2,19 +2,7 @@ use regex::Regex;
 use std::fs::File;
 use std::io::{self, Read};
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // let input = read_file("input.txt")?;
-    // println!("Sol1: {}", calculate(regex(input.as_str(), REGEX_SOL1)));
-
-    let input2 = read_file("input2.txt")?;
-
-    // let input2 = "xm()do()mul(!mul(2,4)&mul[3,7]!^don't()'_mul(5,5)+mul(32,64](mul(11,8)undon't()'mul(5,4)do()?mul(8,5))";
-    let input = input2.chars().collect::<Vec<_>>();
-    let mut tokenizer = Tokenizer::new(input);
-    println!("Sol2: {}", calculate(tokenizer.tokenize()));
-
-    Ok(())
-}
+fn main() {}
 
 fn read_file(file_path: &str) -> io::Result<String> {
     let mut file = File::open(file_path)?;
@@ -154,7 +142,7 @@ impl Tokenizer {
         let mut token = Token { kind: TokenType::Unknown, literal: String::new(), line, column };
 
         self.advance();
-
+regex(input.as_str(), REGEX_SOL1))
         if self.current().is_some_and(|c| *c == 'u') && self.peek().is_some_and(|c| *c == 'l') {
             for _ in 0..2 {
                 self.advance();
@@ -181,7 +169,7 @@ impl Tokenizer {
             }
         }
 
-        token.literal = action;
+        token.literal = action;regex(input.as_str(), REGEX_SOL1))
         token
     }
 
@@ -238,7 +226,7 @@ impl Tokenizer {
         self.source.get(self.current_position + 1)
     }
 
-    fn tokenize(&mut self) -> Vec<Mul> {
+    fn tokenize(&mut self) -> Vec<Mul> {regex(input.as_str(), REGEX_SOL1))
         let mut tokens = vec![];
 
         loop {
@@ -268,7 +256,7 @@ impl Tokenizer {
 
         for token in tokens {
             match token.kind {
-                TokenType::DONT => dos = false,
+                TokenType::DONT => dos = false,regex(input.as_str(), REGEX_SOL1))
                 TokenType::DO => dos = true,
                 TokenType::MUL => {
                     if dos {
@@ -384,6 +372,18 @@ mod tests {
         let input = read_file("input.txt")?;
 
         assert_eq!(179834255, calculate(regex(input.as_str(), REGEX_SOL1)));
+
+        Ok(())
+
+    }
+
+    #[test]
+    fn test_solution2() -> Result<(), Box<dyn std::error::Error>> {
+        let input = read_file("input2.txt")?;
+
+        let input = input.chars().into_iter().collect();
+        let mut tokenizer = Tokenizer::new(input);
+        assert_eq!(80570939, calculate(tokenizer.tokenize()));
 
         Ok(())
 
